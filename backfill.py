@@ -5,8 +5,8 @@ from pathlib import Path
 import sys
 import time
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from src.data_client import ingest_season
+sys.path.insert(0, str(Path(__file__).resolve().parents))
+from data_client import ingest_season
 
 
 def season_range(start_year: int, end_year: int):
