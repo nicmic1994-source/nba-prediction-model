@@ -16,7 +16,7 @@ def season_range(start_year: int, end_year: int):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--start-year", type=int, default=1946)
+    parser.add_argument("--start-year", type=int, default=2010)
     parser.add_argument("--end-year", type=int, default=2025)
     parser.add_argument("--include-playoffs", action="store_true")
     parser.add_argument("--sleep", type=float, default=1.5)
