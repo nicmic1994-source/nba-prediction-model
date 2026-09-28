@@ -3,8 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from src.schedule import update_upcoming
+sys.path.insert(0, str(Path(__file__).resolve().parents))
+from schedule import update_upcoming
 
 out = update_upcoming()
 print(f"upcoming games: {len(out):,}")
