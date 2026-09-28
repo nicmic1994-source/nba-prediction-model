@@ -27,9 +27,9 @@ if __name__ == "__main__":
         for season_type in season_types:
             print(f"\n=== {season} / {season_type} ===")
             try:
-                paths = ingest_season(season, season_type)
-                print(paths[0])
-                print(paths[1])
+                path = ingest_season(season, season_type)
+                print(path)
+                
             except Exception as exc:
                 print(f"FAILED {season} / {season_type}: {exc}")
             time.sleep(args.sleep)
