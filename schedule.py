@@ -69,7 +69,7 @@ def update_upcoming(
     output_path: str | Path = "data/processed/upcoming_features.parquet",
     season: str | None = None,
 ) -> pd.DataFrame:
-    from .model import load_bundle
+    from src.model import load_bundle
 
     history = pd.read_parquet(history_path)
     bundle = load_bundle(model_path)
