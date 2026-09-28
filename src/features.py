@@ -70,7 +70,18 @@ def build_team_history(team_logs: pd.DataFrame) -> pd.DataFrame:
     df = add_box_score_metrics(team_logs)
     df = _add_opponent_columns(df)
     df["GAME_DATE"] = pd.to_datetime(df["GAME_DATE"])
-    df = df.sort_values(["TEAM_ID", "GAME_DATE", "GAME_ID"]).reset_index(drop=True)
+
+if "SEASON_YEAR" not in df.columns and "SEASON_ID" in df.columns:
+    df["SEASON_YEAR"] = (
+        df["SEASON_ID"]
+        .astype(str)
+        .str[-4:]
+        .astype(int)
+    )
+
+df = df.sort_values(
+    ["TEAM_ID", "GAME_DATE", "GAME_ID"]
+).reset_index(drop=True)
 
     # Core feature rule: shift first, then roll. This guarantees game N never sees game N's stats.
     for window in (5, 10, 20):
