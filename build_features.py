@@ -4,7 +4,7 @@ from pathlib import Path
 import sys
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents))
 from src.features import build_team_history, make_matchup_dataset
 
 RAW = Path("data/raw")
