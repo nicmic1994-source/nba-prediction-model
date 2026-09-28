@@ -1,6 +1,8 @@
+
 streamlit
 pandas
 numpy
 scikit-learn
 joblib
 pyarrow
+nba_api
