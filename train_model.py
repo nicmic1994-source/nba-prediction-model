@@ -4,7 +4,7 @@ from pathlib import Path
 import sys
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents))
 from src.model import train_walk_forward, save_bundle
 from sklearn.inspection import permutation_importance
 
