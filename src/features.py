@@ -69,44 +69,60 @@ TEAM_METRICS = [
 def build_team_history(team_logs: pd.DataFrame) -> pd.DataFrame:
     df = add_box_score_metrics(team_logs)
     df = _add_opponent_columns(df)
+
     df["GAME_DATE"] = pd.to_datetime(df["GAME_DATE"])
 
-if "SEASON_YEAR" not in df.columns and "SEASON_ID" in df.columns:
-    df["SEASON_YEAR"] = (
-        df["SEASON_ID"]
-        .astype(str)
-        .str[-4:]
-        .astype(int)
-    )
+    if "SEASON_YEAR" not in df.columns and "SEASON_ID" in df.columns:
+        df["SEASON_YEAR"] = (
+            df["SEASON_ID"]
+            .astype(str)
+            .str[-4:]
+            .astype(int)
+        )
 
-df = df.sort_values(
-    ["TEAM_ID", "GAME_DATE", "GAME_ID"]
-).reset_index(drop=True)
+    df = df.sort_values(
+        ["TEAM_ID", "GAME_DATE", "GAME_ID"]
+    ).reset_index(drop=True)
 
-    # Core feature rule: shift first, then roll. This guarantees game N never sees game N's stats.
     for window in (5, 10, 20):
         for metric in TEAM_METRICS:
             df[f"{metric}_l{window}"] = (
                 df.groupby("TEAM_ID")[metric]
-                .transform(lambda s: s.shift(1).rolling(window, min_periods=max(2, window // 2)).mean())
+                .transform(
+                    lambda s: s.shift(1).rolling(
+                        window,
+                        min_periods=max(2, window // 2),
+                    ).mean()
+                )
             )
 
-    # Exponentially weighted form reacts faster than a fixed rolling window.
     for metric in TEAM_METRICS:
-        df[f"{metric}_ewm"] = df.groupby("TEAM_ID")[metric].transform(
-            lambda s: s.shift(1).ewm(span=15, adjust=False, min_periods=5).mean()
+        df[f"{metric}_ewm"] = (
+            df.groupby("TEAM_ID")[metric].transform(
+                lambda s: s.shift(1).ewm(
+                    span=15,
+                    adjust=False,
+                    min_periods=5,
+                ).mean()
+            )
         )
 
-    # Season-to-date baseline, also lagged.
-    season_key = ["TEAM_ID", "SEASON_YEAR"] if "SEASON_YEAR" in df else ["TEAM_ID"]
+    season_key = (
+        ["TEAM_ID", "SEASON_YEAR"]
+        if "SEASON_YEAR" in df.columns
+        else ["TEAM_ID"]
+    )
+
     for metric in TEAM_METRICS:
         df[f"{metric}_season"] = (
-            df.groupby(season_key)[metric]
-            .transform(lambda s: s.shift(1).expanding(min_periods=3).mean())
+            df.groupby(season_key)[metric].transform(
+                lambda s: s.shift(1).expanding(
+                    min_periods=3
+                ).mean()
+            )
         )
 
     return df
-
 
 def _parse_home(matchup: pd.Series) -> pd.Series:
     # NBA matchup strings are e.g. "LAL vs. BOS" or "LAL @ BOS".
