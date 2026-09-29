@@ -50,7 +50,7 @@ def fetch_team_game_logs(
             date_to_nullable="",
             direction="ASC",
             league_id="00",
-            player_or_team="T",
+            player_or_team_abbreviation="T",
             season=season,
             season_type_all_star=season_type,
             sorter="DATE",
